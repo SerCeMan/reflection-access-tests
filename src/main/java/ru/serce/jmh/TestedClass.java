@@ -21,6 +21,10 @@ public final class TestedClass {
 	public static Integer getCStatic() {
 		return aStat;
 	}
+	
+	public static Integer getDStatic() {
+		return aStat;
+	}
 
 	public Integer getA() {
 		return aStat;
@@ -31,6 +35,10 @@ public final class TestedClass {
 	}
 
 	public Integer getC() {
+		return aStat;
+	}
+	
+	public Integer getD() {
 		return aStat;
 	}
 }

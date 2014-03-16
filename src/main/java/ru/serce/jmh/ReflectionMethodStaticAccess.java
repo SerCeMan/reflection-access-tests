@@ -1,5 +1,8 @@
 package ru.serce.jmh;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +26,7 @@ public class ReflectionMethodStaticAccess {
 	
 	Method simpleMethod;
 	Method methodAccessible;
+	MethodHandle methodHandle;
 	FastMethod fastMethod;
 	
 	@Setup
@@ -33,30 +37,50 @@ public class ReflectionMethodStaticAccess {
 			Method method = clazz.getMethod("getBStatic", null);
 			method.setAccessible(true);
 			methodAccessible = method;
-
+		
 			fastMethod = FastClass.create(clazz).getMethod("getCStatic", null);
+			
+			methodHandle = MethodHandles.lookup().findStatic(clazz, "getDStatic", MethodType.methodType(Integer.class));
 		} catch (Exception e) {
 			// do nothing
 		}
 	}
 
+//	@CompilerControl(PRINT)
 	@GenerateMicroBenchmark
-	public Object testFastMethodSave() throws Exception {
+	public Object testFastMethod() throws Exception {
 		return fastMethod.invoke(null, null);
 	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodSaveAccessible() throws Exception {
+	public Object testMethodAccessible() throws Exception {
 		return methodAccessible.invoke(null, null);
-	}
+	} 
 
 	@GenerateMicroBenchmark
-	public Object testMethodSaveNotAccessible() throws Exception {
+	public Object testMethodNotAccessible() throws Exception {
 		return simpleMethod.invoke(null, null);
 	}
+	
+	@GenerateMicroBenchmark
+	public Integer testMethodHandleExact() throws Throwable {
+		return (Integer)methodHandle.invokeExact();
+	}
+	
+	@GenerateMicroBenchmark
+	public Integer testMethodHandle() throws Throwable {
+		return (Integer)methodHandle.invoke();
+	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodStraighforward() throws Exception {
+	public Object testMethodDirect() throws Exception {
 		return TestedClass.getAStatic();
 	}
+	
+//	public static void main(String[] args) throws Throwable {
+//		ReflectionMethodStaticAccess reflectionMethodStaticAccess = new ReflectionMethodStaticAccess();
+//		reflectionMethodStaticAccess.init();
+//		System.out.println(reflectionMethodStaticAccess.testMethodHandle());
+//		System.out.println(reflectionMethodStaticAccess.testMethodHandleExact());
+//	}
 }

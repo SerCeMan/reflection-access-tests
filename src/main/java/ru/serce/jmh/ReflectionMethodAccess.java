@@ -45,22 +45,22 @@ public class ReflectionMethodAccess {
 	}
 
 	@GenerateMicroBenchmark
-	public Object testFastMethodSave() throws Exception {
+	public Object testFastMethod() throws Exception {
 		return fastMethod.invoke(testedObject, null);
 	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodSaveAccessible() throws Exception {
+	public Object testMethodAccessible() throws Exception {
 		return methodAccessible.invoke(testedObject, null);
 	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodSaveNotAccessible() throws Exception {
+	public Object testMethodNotAccessible() throws Exception {
 		return simpleMethod.invoke(testedObject, null);
 	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodStraighforward() throws Exception {
+	public Object testMethodDirect() throws Exception {
 		return testedObject.getA();
 	}
 
