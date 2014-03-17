@@ -46,41 +46,33 @@ public class ReflectionMethodStaticAccess {
 		}
 	}
 
-//	@CompilerControl(PRINT)
 	@GenerateMicroBenchmark
-	public Object testFastMethod() throws Exception {
+	public Object testFastMethod() throws Throwable {
 		return fastMethod.invoke(null, null);
 	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodAccessible() throws Exception {
+	public Object testMethodAccessible() throws Throwable {
 		return methodAccessible.invoke(null, null);
 	} 
 
 	@GenerateMicroBenchmark
-	public Object testMethodNotAccessible() throws Exception {
+	public Object testMethodNotAccessible() throws Throwable {
 		return simpleMethod.invoke(null, null);
 	}
 	
 	@GenerateMicroBenchmark
-	public Integer testMethodHandleExact() throws Throwable {
+	public Object testMethodHandleExact() throws Throwable {
 		return (Integer)methodHandle.invokeExact();
 	}
 	
 	@GenerateMicroBenchmark
-	public Integer testMethodHandle() throws Throwable {
+	public Object testMethodHandle() throws Throwable {
 		return (Integer)methodHandle.invoke();
 	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodDirect() throws Exception {
+	public Object testMethodDirect() throws Throwable {
 		return TestedClass.getAStatic();
 	}
-	
-//	public static void main(String[] args) throws Throwable {
-//		ReflectionMethodStaticAccess reflectionMethodStaticAccess = new ReflectionMethodStaticAccess();
-//		reflectionMethodStaticAccess.init();
-//		System.out.println(reflectionMethodStaticAccess.testMethodHandle());
-//		System.out.println(reflectionMethodStaticAccess.testMethodHandleExact());
-//	}
 }

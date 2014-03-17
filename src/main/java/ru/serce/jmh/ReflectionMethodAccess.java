@@ -1,5 +1,8 @@
 package ru.serce.jmh;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +29,7 @@ public class ReflectionMethodAccess {
 	Method simpleMethod;
 	Method methodAccessible;
 	FastMethod fastMethod;
+	MethodHandle methodHandle;
 	
 	@Setup
 	public void init() {
@@ -37,30 +41,43 @@ public class ReflectionMethodAccess {
 			Method method = clazz.getMethod("getB", null);
 			method.setAccessible(true);
 			methodAccessible = method;
-
+			
 			fastMethod = FastClass.create(clazz).getMethod("getC", null);
+			
+			methodHandle = MethodHandles.lookup().findVirtual(clazz, "getD", MethodType.methodType(Integer.class));
 		} catch (Exception e) {
 			// do nothing
 		}
 	}
 
 	@GenerateMicroBenchmark
-	public Object testFastMethod() throws Exception {
+	public Object testFastMethod() throws Throwable {
 		return fastMethod.invoke(testedObject, null);
 	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodAccessible() throws Exception {
+	public Object testMethodAccessible() throws Throwable {
 		return methodAccessible.invoke(testedObject, null);
 	}
 
 	@GenerateMicroBenchmark
-	public Object testMethodNotAccessible() throws Exception {
+	public Object testMethodNotAccessible() throws Throwable {
 		return simpleMethod.invoke(testedObject, null);
 	}
+	
+	@GenerateMicroBenchmark
+	public Object testMethodHandleExact() throws Throwable {
+		return (Integer)methodHandle.invokeExact(testedObject);
+	}
+	
+	@GenerateMicroBenchmark
+	public Object testMethodHandle() throws Throwable {
+		return (Integer)methodHandle.invoke(testedObject);
+	}
+
 
 	@GenerateMicroBenchmark
-	public Object testMethodDirect() throws Exception {
+	public Object testMethodDirect() throws Throwable {
 		return testedObject.getA();
 	}
 
